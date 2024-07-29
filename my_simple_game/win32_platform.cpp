@@ -2,11 +2,19 @@
 
 bool isRunning = true;
 
-void* bufferMemory;
-int bufferWidth;
-int bufferHeight;
-int bufferSize;
-BITMAPINFO bufferBitmapInfo;
+// storing all the buffer variables in a struct
+// to keep things organised.
+struct RenderBuffer {
+	int width, height, size;
+	void* memory;
+	BITMAPINFO bitmapInfo;
+};
+RenderBuffer renderBuffer;
+//void* bufferMemory;
+//int bufferWidth;
+//int bufferHeight;
+//int bufferSize;
+//BITMAPINFO bufferBitmapInfo;
 
 // This is for the callback (window.lpfnWndProc)
 LRESULT CALLBACK WindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -62,9 +70,9 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 // Sim
 		// using a temp pixel pointer and looping through each pixel on our screen.
 		// each pixel if of type unsigned int and the first one is bufferMemory.
-		unsigned int* pixel = (unsigned int*)bufferMemory;
-		for (int y = 0; y < bufferHeight; y++) {
-			for (int x = 0; x < bufferWidth; x++) {
+		unsigned int* pixel = (unsigned int*)renderBuffer.memory;
+		for (int y = 0; y < renderBuffer.height; y++) {
+			for (int x = 0; x < renderBuffer.width; x++) {
 				// Do something to the pixel.
 				// then increment to next.
 				*pixel++ = (0Xff00ff * x) + (0x00ff00 * y);
@@ -73,7 +81,7 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 
 // Refresh
 		// Need the Device Context, Buffer information, and the Bitmap Info
-		StretchDIBits(hDeviceContext, 0, 0, bufferWidth, bufferHeight, 0, 0, bufferWidth, bufferHeight, bufferMemory, &bufferBitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+		StretchDIBits(hDeviceContext, 0, 0, renderBuffer.width, renderBuffer.height, 0, 0, renderBuffer.width, renderBuffer.height, renderBuffer.memory, &renderBuffer.bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 	}
 }
 
@@ -90,29 +98,29 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_SIZE:						// Getting the new size of the window
 		RECT rect;						// Create a rectangle struct
 		GetClientRect(hwnd, &rect);		// And pass it into this function along with the window
-		bufferWidth = rect.right - rect.left;
-		bufferHeight = rect.bottom - rect.top;
+		renderBuffer.width = rect.right - rect.left;
+		renderBuffer.height = rect.bottom - rect.top;
 
 		// number of pixels     size of each pixel
-		bufferSize = (bufferWidth * bufferHeight) * sizeof(unsigned int);
+		renderBuffer.size = (renderBuffer.width * renderBuffer.height) * sizeof(unsigned int);
 		// Checking if bufferMemory contains stuff in it, if it does
 		// we will free that space and make a new one in place of it
-		if (bufferMemory) VirtualFree(bufferMemory, 0, MEM_RELEASE);
+		if (renderBuffer.memory) VirtualFree(renderBuffer.memory, 0, MEM_RELEASE);
 		// Reserving memory in the heap without specifying the type
 		// because we need this space to store the buffer size.
 		// bufferMemory is of type void*
 		// PAGE_READWRITE because the content in the the space in this heap is
 		// going to keep changing as the user resizes the window.
-		bufferMemory = VirtualAlloc(0, bufferSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		renderBuffer.memory = VirtualAlloc(0, renderBuffer.size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 		// Now send this to windows to use it in render.
 
 		// You need the bitmap info header for render as well.
-		bufferBitmapInfo.bmiHeader.biSize = sizeof(bufferBitmapInfo.bmiHeader);
-		bufferBitmapInfo.bmiHeader.biWidth = bufferWidth;
-		bufferBitmapInfo.bmiHeader.biHeight = bufferHeight;
-		bufferBitmapInfo.bmiHeader.biPlanes = 1;
-		bufferBitmapInfo.bmiHeader.biBitCount = 32;
-		bufferBitmapInfo.bmiHeader.biCompression = BI_RGB;
+		renderBuffer.bitmapInfo.bmiHeader.biSize = sizeof(renderBuffer.bitmapInfo.bmiHeader);
+		renderBuffer.bitmapInfo.bmiHeader.biWidth = renderBuffer.width;
+		renderBuffer.bitmapInfo.bmiHeader.biHeight = renderBuffer.height;
+		renderBuffer.bitmapInfo.bmiHeader.biPlanes = 1;
+		renderBuffer.bitmapInfo.bmiHeader.biBitCount = 32;
+		renderBuffer.bitmapInfo.bmiHeader.biCompression = BI_RGB;
 		// using the struct below to know which attributes this struct
 		// contains that we can change or need to fill in.
 		// 
