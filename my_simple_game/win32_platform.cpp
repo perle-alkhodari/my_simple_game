@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "buttons.cpp"
 
 bool isRunning = true;
 
@@ -18,6 +19,9 @@ RenderBuffer renderBuffer;
 //int bufferHeight;
 //int bufferSize;
 //BITMAPINFO bufferBitmapInfo;
+
+// Button input info
+Input input = {};
 
 // This is for the callback (window.lpfnWndProc)
 LRESULT CALLBACK WindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -65,14 +69,41 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 
 // Input
 		MSG message;
+
+		// Reset the button state because changed should only be true while its pressed
+		for (int i = 0; i < NUMBER_OF_BUTTONS; i++) {
+			input.buttons[i].changed = false;
+			// is down will change itself.
+		}
+
 		while (PeekMessage(&message, window, 0, 0, PM_REMOVE)) { 
 			TranslateMessage(&message);
 			DispatchMessageW(&message);
+
+			switch (message.message) {
+			case WM_KEYUP:
+			case WM_KEYDOWN: {
+				unsigned int code = message.wParam;
+				bool isDown = (message.wParam & (1 << 31)) == 0;
+
+				switch (code) {
+				case VK_UP:
+					input.buttons[BUTTON_UP].isDown = isDown;
+					input.buttons[BUTTON_UP].changed = true;
+				}
+				
+			} break;
+			default:
+				TranslateMessage(&message);
+				DispatchMessageW(&message);
+			}
 		}
 
 // Sim
 		ClearScreen(0x00ff00);
-		DrawRectDynamicPosAndSize(50, 50, 50, 50, 0xffffff);
+		if (input.buttons[BUTTON_UP].isDown) {
+			DrawRectDynamicPosAndSize(50, 50, 50, 50, 0xffffff);
+		}
 
 // Refresh
 		// Need the Device Context, Buffer information, and the Bitmap Info

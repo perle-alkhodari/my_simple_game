@@ -53,15 +53,15 @@ void DrawRectDynamicPosition(float x, float y, float width, float height, int co
 	x -= (width / 2);
 	y -= (height / 2);
 
-	DrawRect(x, y, width, height, color);
+	DrawRect((int)x, (int)y, (int)width, (int)height, color);
 }
 
 void DrawRectDynamicPosAndSize(float x, float y, float width, float height, int color)
 {
-	Bracket(0, 100, x);
-	Bracket(0, 100, y);
-	Bracket(0, 100, width);
-	Bracket(0, 100, height);
+	Bracket(0, 100, (int)x);
+	Bracket(0, 100, (int)y);
+	Bracket(0, 100, (int)width);
+	Bracket(0, 100, (int)height);
 
 	x /= 100;
 	y /= 100;
@@ -74,5 +74,5 @@ void DrawRectDynamicPosAndSize(float x, float y, float width, float height, int 
 	x -= (width / 2);
 	y -= (height / 2);
 
-	DrawRect(x, y, width, height, color);
+	DrawRect((int)x, (int)y, (int)width, (int)height, color);
 }
