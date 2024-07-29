@@ -10,6 +10,9 @@ struct RenderBuffer {
 	BITMAPINFO bitmapInfo;
 };
 RenderBuffer renderBuffer;
+// for renderer to have access right click on file and
+// exclude it from build.
+#include "renderer.cpp"
 //void* bufferMemory;
 //int bufferWidth;
 //int bufferHeight;
@@ -68,16 +71,8 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 		}
 
 // Sim
-		// using a temp pixel pointer and looping through each pixel on our screen.
-		// each pixel if of type unsigned int and the first one is bufferMemory.
-		unsigned int* pixel = (unsigned int*)renderBuffer.memory;
-		for (int y = 0; y < renderBuffer.height; y++) {
-			for (int x = 0; x < renderBuffer.width; x++) {
-				// Do something to the pixel.
-				// then increment to next.
-				*pixel++ = (0Xff00ff * x) + (0x00ff00 * y);
-			}
-		}
+		ClearScreen(0x00ff00);
+		DrawRect(100, 200, 80, 300, 0xff0000);
 
 // Refresh
 		// Need the Device Context, Buffer information, and the Bitmap Info
