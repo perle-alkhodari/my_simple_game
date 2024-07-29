@@ -1,8 +1,10 @@
+#include "helpers.cpp"
+
 
 void Render();
 void ClearScreen(int color);
-void DrawRect(int width, int height, int position, int color);
-
+void DrawRect(int posX, int posY, int width, int height, int color);
+void DrawRectPercent(float x, float y, float width, float height, int color);
 
 
 void Render(){ 
@@ -27,11 +29,6 @@ void ClearScreen(int color) {
 	}
 } 
 
-int Bracket(int minVal, int maxVal, int val) {
-	val = (val < minVal) ? minVal : ((val > maxVal) ? maxVal : val);
-	return val;
-}
-
 void DrawRect(int posX, int posY, int width, int height, int color) {
 
 	posX = Bracket(0, renderBuffer.width, posX);
@@ -45,5 +42,37 @@ void DrawRect(int posX, int posY, int width, int height, int color) {
 			*pixel++ = color;
 		}
 	}
+}
 
+void DrawRectDynamicPosition(float x, float y, float width, float height, int color)
+{
+	x /= 100;
+	y /= 100;
+	x *= renderBuffer.width;
+	y *= renderBuffer.height;
+	x -= (width / 2);
+	y -= (height / 2);
+
+	DrawRect(x, y, width, height, color);
+}
+
+void DrawRectDynamicPosAndSize(float x, float y, float width, float height, int color)
+{
+	Bracket(0, 100, x);
+	Bracket(0, 100, y);
+	Bracket(0, 100, width);
+	Bracket(0, 100, height);
+
+	x /= 100;
+	y /= 100;
+	width /= 100;
+	height /= 100;
+	width *= renderBuffer.width;
+	height *= renderBuffer.height;
+	x *= renderBuffer.width;
+	y *= renderBuffer.height;
+	x -= (width / 2);
+	y -= (height / 2);
+
+	DrawRect(x, y, width, height, color);
 }

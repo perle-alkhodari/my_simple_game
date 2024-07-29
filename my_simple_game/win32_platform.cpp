@@ -72,7 +72,7 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 
 // Sim
 		ClearScreen(0x00ff00);
-		DrawRect(100, 200, 80, 300, 0xff0000);
+		DrawRectDynamicPosAndSize(50, 50, 50, 50, 0xffffff);
 
 // Refresh
 		// Need the Device Context, Buffer information, and the Bitmap Info
