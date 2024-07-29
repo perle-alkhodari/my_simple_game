@@ -60,6 +60,16 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 		}
 
 // Sim
+		// using a temp pixel pointer and looping through each pixel on our screen.
+		// each pixel if of type unsigned int and the first one is bufferMemory.
+		unsigned int* pixel = (unsigned int*)bufferMemory;
+		for (int y = 0; y < bufferHeight; y++) {
+			for (int x = 0; x < bufferWidth; x++) {
+				// Do something to the pixel.
+				// then increment to next.
+				*pixel++ = (0Xff00ff * x) + (0x00ff00 * y);
+			}
+		}
 
 // Refresh
 		// Need the Device Context, Buffer information, and the Bitmap Info
