@@ -1,4 +1,4 @@
-struct buttonState {
+struct ButtonState {
 	bool isDown;
 	bool changed;
 };
@@ -11,5 +11,5 @@ enum {
 };
 
 struct Input {
-	buttonState buttons[NUMBER_OF_BUTTONS];
+	ButtonState buttons[NUMBER_OF_BUTTONS];
 };

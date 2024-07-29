@@ -4,7 +4,8 @@
 void Render();
 void ClearScreen(int color);
 void DrawRect(int posX, int posY, int width, int height, int color);
-void DrawRectPercent(float x, float y, float width, float height, int color);
+void DrawRectDynamicPosition(float x, float y, float width, float height, int color);
+void DrawRectDynamicPosAndSize(float x, float y, float width, float height, int color);
 
 
 void Render(){ 
@@ -60,15 +61,11 @@ void DrawRectDynamicPosAndSize(float x, float y, float width, float height, int 
 {
 	Bracket(0, 100, (int)x);
 	Bracket(0, 100, (int)y);
-	Bracket(0, 100, (int)width);
-	Bracket(0, 100, (int)height);
+	Bracket(0, renderBuffer.width, (int)width);
+	Bracket(0, renderBuffer.height, (int)height);
 
 	x /= 100;
 	y /= 100;
-	width /= 100;
-	height /= 100;
-	width *= renderBuffer.width;
-	height *= renderBuffer.height;
 	x *= renderBuffer.width;
 	y *= renderBuffer.height;
 	x -= (width / 2);

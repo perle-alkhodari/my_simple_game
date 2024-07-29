@@ -1,5 +1,4 @@
 #include <windows.h>
-#include "buttons.cpp"
 
 bool isRunning = true;
 
@@ -14,6 +13,7 @@ RenderBuffer renderBuffer;
 // for renderer to have access right click on file and
 // exclude it from build.
 #include "renderer.cpp"
+#include "buttons.cpp"
 //void* bufferMemory;
 //int bufferWidth;
 //int bufferHeight;
@@ -22,6 +22,7 @@ RenderBuffer renderBuffer;
 
 // Button input info
 Input input = {};
+#include "game.cpp"
 
 // This is for the callback (window.lpfnWndProc)
 LRESULT CALLBACK WindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -81,17 +82,32 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 			DispatchMessageW(&message);
 
 			switch (message.message) {
+			// if any key is released
 			case WM_KEYUP:
+			// if any key is pressed
 			case WM_KEYDOWN: {
 				unsigned int code = message.wParam;
 				bool isDown = (message.wParam & (1 << 31)) == 0;
 
+				// the key that has been either pressed or released
 				switch (code) {
 				case VK_UP:
 					input.buttons[BUTTON_UP].isDown = isDown;
 					input.buttons[BUTTON_UP].changed = true;
+					break;
+				case VK_DOWN:
+					input.buttons[BUTTON_DOWN].isDown = isDown;
+					input.buttons[BUTTON_DOWN].changed = true;
+					break;
+				case VK_LEFT:
+					input.buttons[BUTTON_LEFT].isDown = isDown;
+					input.buttons[BUTTON_LEFT].changed = true;
+					break;
+				case VK_RIGHT:
+					input.buttons[BUTTON_RIGHT].isDown = isDown;
+					input.buttons[BUTTON_RIGHT].changed = true;
+					break;
 				}
-				
 			} break;
 			default:
 				TranslateMessage(&message);
@@ -100,10 +116,7 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 		}
 
 // Sim
-		ClearScreen(0x00ff00);
-		if (input.buttons[BUTTON_UP].isDown) {
-			DrawRectDynamicPosAndSize(50, 50, 50, 50, 0xffffff);
-		}
+		simulate_game(&input);
 
 // Refresh
 		// Need the Device Context, Buffer information, and the Bitmap Info
